@@ -29,7 +29,7 @@ public class LectorConsola
     }
     public void pausar()
     {
-        System.out.print("\n Presiones Enter para continuar");
+        System.out.print("\n Presione Enter para continuar");
         sc.nextLine();
     }
     //leer un numero entero entre min y max

@@ -10,13 +10,16 @@ public abstract class Persona
         this.nombre = nombre;
         this.email = email;
     }
-    public String getId() {
+    public String getId()
+    {
         return id;
     }
-    public String getNombre() {
+    public String getNombre()
+    {
         return nombre;
     }
-    public String getEmail() {
+    public String getEmail()
+    {
         return email;
     }
     public abstract String mostrarInformacion();

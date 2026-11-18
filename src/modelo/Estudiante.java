@@ -13,13 +13,16 @@ public class Estudiante extends Persona
         this.historialMaterias = new LinkedList<>();
         this.notas = new RegistroNotas();
     }
-    public int getSemestre() {
+    public int getSemestre()
+    {
         return semestre;
     }
-    public LinkedList<String> getHistorialMaterias() {
+    public LinkedList<String> getHistorialMaterias()
+    {
         return historialMaterias;
     }
-    public RegistroNotas getNotas() {
+    public RegistroNotas getNotas()
+    {
         return notas;
     }
     public void agregarAlHistorial(String codigo)

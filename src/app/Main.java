@@ -23,7 +23,7 @@ public class Main
             {
                 //gestion de estudiantes
                 case 1:
-                    Estudiante e = new Estudiante("E001", "Juan Pérez", "juan.perez@universidad.edu", 5);
+                    Estudiante e = new Estudiante("E001", "Juan Pérez", "juan.perez@.universidad.edu", 5);
                     e.agregarAlHistorial("MAT101");
                     System.out.println("Estudiante registrado: " + e.mostrarInformacion());
                     System.out.println("Ultima materia inscrita: " + e.getUltimaMateria());
