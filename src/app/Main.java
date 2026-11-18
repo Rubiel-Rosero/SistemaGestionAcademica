@@ -1,7 +1,6 @@
 package app;
-
+import modelo.Estudiante;
 import util.LectorConsola;
-
 /**
  * Clase principal del Sistema de Gestion Academica.
  * Muestra el menu con las 22 opciones y, segun lo que elija el usuario,
@@ -11,7 +10,6 @@ import util.LectorConsola;
 public class Main
 {
     static LectorConsola lector = new LectorConsola();
-
     public static void main(String[] args)
     {
         int opcion;
@@ -25,6 +23,10 @@ public class Main
             {
                 //gestion de estudiantes
                 case 1:
+                    Estudiante e = new Estudiante("E001", "Juan Pérez", "juan.perez@universidad.edu", 5);
+                    e.agregarAlHistorial("MAT101");
+                    System.out.println("Estudiante registrado: " + e.mostrarInformacion());
+                    System.out.println("Ultima materia inscrita: " + e.getUltimaMateria());
                 case 2:
                 case 3:
                 case 4:
@@ -59,10 +61,13 @@ public class Main
                 default:
                     System.out.println("Opcion no valida.");
             }
+        if(opcion != 22)
+        {
+            lector.pausar();
+        }
         }while(opcion != 22);
         lector.cerrar();
     }
-
     //mostrar todas las opciones del menu
     private static void mostrarMenu()
     {

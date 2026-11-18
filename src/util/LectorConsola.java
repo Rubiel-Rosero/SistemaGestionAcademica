@@ -27,6 +27,11 @@ public class LectorConsola
         }
         return texto;
     }
+    public void pausar()
+    {
+        System.out.print("\n Presiones Enter para continuar");
+        sc.nextLine();
+    }
     //leer un numero entero entre min y max
     public int leerEntero(String mensaje, int min, int max)
     {
