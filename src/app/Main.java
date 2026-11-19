@@ -1,6 +1,9 @@
 package app;
+import excepciones.EstudianteNoEncontradoException;
 import modelo.Estudiante;
+import servicio.GestorEstudiantes;
 import util.LectorConsola;
+import util.Validador;
 /**
  * Clase principal del Sistema de Gestion Academica.
  * Muestra el menu con las 22 opciones y, segun lo que elija el usuario,
@@ -10,6 +13,7 @@ import util.LectorConsola;
 public class Main
 {
     static LectorConsola lector = new LectorConsola();
+    static GestorEstudiantes gestorEstudiantes = new GestorEstudiantes();
     public static void main(String[] args)
     {
         int opcion;
@@ -23,13 +27,17 @@ public class Main
             {
                 //gestion de estudiantes
                 case 1:
-                    Estudiante e = new Estudiante("E001", "Juan Pérez", "juan.perez@.universidad.edu", 5);
-                    e.agregarAlHistorial("MAT101");
-                    System.out.println("Estudiante registrado: " + e.mostrarInformacion());
-                    System.out.println("Ultima materia inscrita: " + e.getUltimaMateria());
+                    registrarEstudiante();
+                    break;
                 case 2:
+                    buscarEstudiante();
                 case 3:
+                    listarEstudiantes();
+                    break;
                 case 4:
+                    listarEstudiantes();
+                    eliminarEstudiante();
+                    break;
                 //gestion de materias
                 case 5:
                 case 6:
@@ -105,4 +113,66 @@ public class Main
         System.out.println("\n=== SALIR ===");
         System.out.println("22. Salir\n");
     }
+    //metodo para registrar el estudiante
+    private static void registrarEstudiante()
+    {
+        System.out.println("Ingrese el id");
+        String id = lector.leerTexto("Id: ");
+        String nombre = lector.leerTexto("Nombre: ");
+        String email = lector.leerTexto("Email: ");
+        while(!Validador.esEmailValido(email))
+        {
+            System.out.println("Email no valido, ejemplo: ana@uni.edu");
+            email = lector.leerTexto("Email: ");
+        }
+        int semestre = lector.leerEntero("Semestre (1-10): ", 1, 10);
+        Estudiante e = new Estudiante(id, nombre, email, semestre);
+        if(gestorEstudiantes.registrar(e))
+        {
+            System.out.println("Estudiante registrado exitosamente");
+        }else
+        {
+            System.out.println("Ya existe un estudiante con el Id " + id + ".");
+        }
+    }
+    //listar a los estudiantes
+    private static void listarEstudiantes()
+    {
+        Estudiante[] lista = gestorEstudiantes.listar();
+        if(lista.length == 0)
+        {
+            System.out.println("No hay estudiantes registrados");
+        }else
+        {
+            for(int i = 0; i < lista.length; i++)
+            {
+                System.out.println(lista[i].mostrarInformacion());
+            }
+        }
+    }
+    //buscar estudiante por id
+    private static void  buscarEstudiante()
+    {
+        String id = lector.leerTexto("Id: ");
+        try
+        {
+            Estudiante e = gestorEstudiantes.buscar(id);
+            System.out.println(e.mostrarInformacion());
+        }catch(EstudianteNoEncontradoException ex){
+            System.out.println("Error: EstudianteNoEncontradoException " + ex.getMessage());
+        }
+    }
+    //eliminar estudiante
+    private static void eliminarEstudiante()
+    {
+        String id = lector.leerTexto("Id: ");
+        try
+        {
+            Estudiante e = gestorEstudiantes.eliminar(id);
+            System.out.println("Estudiante eliminado exitosamente");
+        }catch(EstudianteNoEncontradoException ex){
+            System.out.println("Error: EstudianteNoEncontradoException " + ex.getMessage());
+        }
+    }
+
 }
