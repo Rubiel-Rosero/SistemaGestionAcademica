@@ -31,6 +31,7 @@ public class Main
                     break;
                 case 2:
                     buscarEstudiante();
+                    break;
                 case 3:
                     listarEstudiantes();
                     break;
