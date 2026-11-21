@@ -1,7 +1,11 @@
 package app;
 import excepciones.EstudianteNoEncontradoException;
 import modelo.Estudiante;
+import modelo.Facultad;
+import modelo.Materia;
+import modelo.Profesor;
 import servicio.GestorEstudiantes;
+import servicio.GestorMaterias;
 import util.LectorConsola;
 import util.Validador;
 /**
@@ -14,6 +18,7 @@ public class Main
 {
     static LectorConsola lector = new LectorConsola();
     static GestorEstudiantes gestorEstudiantes = new GestorEstudiantes();
+    static GestorMaterias gestorMaterias = new GestorMaterias(gestorEstudiantes);
     public static void main(String[] args)
     {
         int opcion;
@@ -41,7 +46,11 @@ public class Main
                     break;
                 //gestion de materias
                 case 5:
+                    crearMateria();
+                    break;
                 case 6:
+                    agregarPrerrequisito();
+                    break;
                 case 7:
                 case 8:
                 case 9:
@@ -175,5 +184,47 @@ public class Main
             System.out.println("Error: EstudianteNoEncontradoException " + ex.getMessage());
         }
     }
-
+    /*
+    Las materias
+    */
+   //crear una materia nueva
+    private static void crearMateria()
+    {
+        String codigo = lector.leerTexto("Codigo: ").toUpperCase();
+        String nombre = lector.leerTexto("Nombre: ");
+        int cupos = lector.leerEntero("Cupos maximos (1-50): ", 1, 50);
+        int creditos = lector.leerEntero("Creditos (1-5): ", 1, 5);
+        //elegimos la facultad
+        Facultad[] facultades = gestorMaterias.getFacultades();
+        for(int i = 0; i < facultades.length; i++)
+        {
+            System.out.println((i + 1) + " " + facultades[i].getNombre());
+        }
+        int f = lector.leerEntero("Facultad: ", 1, 5);
+        //los datos del profesor
+        String idProfesor = lector.leerTexto("Id del profesor: ");
+        String nombreProfesor = lector.leerTexto("Nombre del profesor: ");
+        String emailProfesor = lector.leerTexto("Email del profesor: ");
+        while(!Validador.esEmailValido(emailProfesor))
+        {
+            System.out.println("Email no valido, ejemplo: juanelmecanico@uni.edu");
+            emailProfesor = lector.leerTexto("Email del profesor: ");
+        }
+        Profesor p = new Profesor(idProfesor, nombreProfesor, emailProfesor, facultades[f - 1].getNombre(), 0);// (f - 1) se resta 1 porque el usuario ve las facultades del 1 al 5
+        Materia m = new Materia(codigo, nombre, cupos, creditos, facultades[f - 1], p);
+        if(gestorMaterias.crearMateria(m))
+        {
+            System.out.println("Materia creada exitosamente");
+        }else
+        {
+            System.out.println("Ya existe una materia con el codigo " + codigo);
+        }
+    }
+    //agregar un prerrequisito
+    private static void agregarPrerrequisito()
+    {
+        String codigo = lector.leerTexto("Codigo de la materia: ").toUpperCase();
+        String codigoPre = lector.leerTexto("Codigo del prerrequisito: ").toUpperCase();
+        System.out.println(gestorMaterias.agregarPrerrequisito(codigo, codigoPre));
+    }
 }
