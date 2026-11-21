@@ -1,5 +1,10 @@
 package app;
+import java.util.Iterator;
+import java.util.Queue;
+import excepciones.ColaDeEsperaVaciaException;
+import excepciones.CupoLlenoException;
 import excepciones.EstudianteNoEncontradoException;
+import excepciones.PreRequisitoNoAprobadoException;
 import modelo.Estudiante;
 import modelo.Facultad;
 import modelo.Materia;
@@ -52,9 +57,17 @@ public class Main
                     agregarPrerrequisito();
                     break;
                 case 7:
+                    mostrarPrerrequisitos();
+                    break;
                 case 8:
+                    inscribirEstudiante();
+                    break;
                 case 9:
+                    cancelarInscripcion();
+                    break;
                 case 10:
+                    mostrarColaEspera();
+                    break;
                 //gestion de horarios
                 case 11:
                 case 12:
@@ -169,7 +182,7 @@ public class Main
             Estudiante e = gestorEstudiantes.buscar(id);
             System.out.println(e.mostrarInformacion());
         }catch(EstudianteNoEncontradoException ex){
-            System.out.println("Error: EstudianteNoEncontradoException " + ex.getMessage());
+            System.out.println("Error: EstudianteNoEncontradoException - " + ex.getMessage());
         }
     }
     //eliminar estudiante
@@ -181,7 +194,7 @@ public class Main
             Estudiante e = gestorEstudiantes.eliminar(id);
             System.out.println("Estudiante eliminado exitosamente");
         }catch(EstudianteNoEncontradoException ex){
-            System.out.println("Error: EstudianteNoEncontradoException " + ex.getMessage());
+            System.out.println("Error: EstudianteNoEncontradoException - " + ex.getMessage());
         }
     }
     /*
@@ -226,5 +239,85 @@ public class Main
         String codigo = lector.leerTexto("Codigo de la materia: ").toUpperCase();
         String codigoPre = lector.leerTexto("Codigo del prerrequisito: ").toUpperCase();
         System.out.println(gestorMaterias.agregarPrerrequisito(codigo, codigoPre));
+    }
+    //mostror prerrequisitos
+    private static void mostrarPrerrequisitos()
+    {
+        String codigo = lector.leerTexto("Codigo de la materia: ").toUpperCase();
+        Materia m = gestorMaterias.buscarMateria(codigo);
+        if(m == null)
+        {
+            System.out.println("No existe una materia con el codigo: " + codigo + " ");
+            return;
+        }
+        if(m.getPrerrequisitos().isEmpty())
+        {
+            System.out.println(m.getNombre() + " no tiene prerrequisitos");
+            return;
+        }
+        System.out.println("Prerrequisitos de " + m.getNombre() + ":");
+        Iterator<String> it = m.getPrerrequisitos().iterator();// Iterator: Es como un dedo que va señalando la lista de un nodo en uno.
+        while(it.hasNext())//entonces pregunta al iterador si queda otro nodo
+        {
+            String codigoPre = it.next();
+            Materia pre = gestorMaterias.buscarMateria(codigoPre);
+            System.out.println(" " + codigoPre + " " + pre.getNombre());
+        }
+    }
+    //inscribir un estudiante a una materia
+    private static void inscribirEstudiante()
+    {
+        String id = lector.leerTexto("Id del estudiante: ");
+        String codigo = lector.leerTexto("Codigo de la materia: ").toUpperCase();
+        try
+        {
+            System.out.println(gestorMaterias.inscribir(id, codigo));
+        }catch(EstudianteNoEncontradoException ex)
+        {
+            System.out.println("Error: EstudianteNoEncontradoException - " + ex.getMessage());
+        }catch(PreRequisitoNoAprobadoException ex)
+        {
+            System.out.println("Error: PreRequisitoNoAprobadoException - " + ex.getMessage());
+        }catch(CupoLlenoException ex)
+        {
+            System.out.println("Error: CupoLlenoException - " + ex.getMessage());
+        }
+    }
+    //cancelar la inscripcion de un estudiante
+    private static void cancelarInscripcion()
+    {
+        String id = lector.leerTexto("Id del estudiante: ");
+        String codigo = lector.leerTexto("Codigo de la materia: ").toUpperCase();
+        try
+        {
+            System.out.println(gestorMaterias.cancelar(id, codigo));
+        }catch(EstudianteNoEncontradoException ex)
+        {
+            System.out.println("Error: EstudianteNoEncontradoException - " + ex.getMessage());
+        }
+    }
+    //mostrar la cola de espera de una materia
+    private static void mostrarColaEspera()
+    {
+        String codigo = lector.leerTexto("Codigo de la materia: ").toUpperCase();
+        try
+        {
+            Queue<String> cola = gestorMaterias.verColaEspera(codigo);
+            if(cola == null)
+            {
+                System.out.println("No existe una materia con el codigo " + codigo + ".");
+                return;
+            }
+            System.out.println("Cola de espera de " + codigo + ":");
+            int posicion = 1;
+            for(String id : cola)
+            {
+                System.out.println(posicion + ". " + id);
+                posicion++;
+            }
+        }catch(ColaDeEsperaVaciaException ex)
+        {
+            System.out.println("Error: ColaDeEsperaVaciaException - " + ex.getMessage());
+        }
     }
 }
