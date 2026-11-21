@@ -1,15 +1,20 @@
 package app;
 import java.util.Iterator;
 import java.util.Queue;
+
+import estructuras.HorarioAula;
 import excepciones.ColaDeEsperaVaciaException;
 import excepciones.CupoLlenoException;
 import excepciones.EstudianteNoEncontradoException;
+import excepciones.HorarioConflictivoException;
 import excepciones.PreRequisitoNoAprobadoException;
+import modelo.Aula;
 import modelo.Estudiante;
 import modelo.Facultad;
 import modelo.Materia;
 import modelo.Profesor;
 import servicio.GestorEstudiantes;
+import servicio.GestorHorarios;
 import servicio.GestorMaterias;
 import util.LectorConsola;
 import util.Validador;
@@ -24,6 +29,7 @@ public class Main
     static LectorConsola lector = new LectorConsola();
     static GestorEstudiantes gestorEstudiantes = new GestorEstudiantes();
     static GestorMaterias gestorMaterias = new GestorMaterias(gestorEstudiantes);
+    static GestorHorarios gestorHorarios = new GestorHorarios(gestorMaterias);
     public static void main(String[] args)
     {
         int opcion;
@@ -70,8 +76,14 @@ public class Main
                     break;
                 //gestion de horarios
                 case 11:
+                    reservarHorario();
+                    break;
                 case 12:
+                    liberarHorario();
+                    break;
                 case 13:
+                    consultarDisponibilidad();
+                    break;
                 //rutas entre edificios
                 case 14:
                 case 15:
@@ -318,6 +330,88 @@ public class Main
         }catch(ColaDeEsperaVaciaException ex)
         {
             System.out.println("Error: ColaDeEsperaVaciaException - " + ex.getMessage());
+        }
+    }
+    /*
+    Los horarios
+    */
+    //mostrar aulas ordenadas y pedirlas
+    private static String pedirAula()
+    {
+        System.out.println("Aulas: ");
+        for(Aula a : gestorHorarios.getAulas().values())
+        {
+            System.out.println("- " + a.mostrarInformacion());
+        }
+        return lector.leerTexto("Aula: ").toUpperCase();
+    }
+    //mostrar los dias y pedirlos
+    private static int pedirDia()
+    {
+        for(int i = 0; i < 7; i++)
+        {
+            System.out.println(i + ". " + HorarioAula.DIAS[i]);
+        }
+        return lector.leerEntero("Dia (0-6): ", 0, 6);
+    }
+    //reservar un horario en un aula
+    private static void reservarHorario()
+    {
+        String aula = pedirAula();
+        int dia = pedirDia();
+        int hora = lector.leerEntero("Hora de inicio (0-23): ", 0, 23);
+        int duracion = lector.leerEntero("Duracion en horas: ", 1, 24 - hora);
+        String codigo = lector.leerTexto("Codigo de la materia: ").toUpperCase();
+        //mostrar como esta cada hora del bloque
+        Aula a = gestorHorarios.buscarAula(aula);
+        if(a != null)
+        {
+            for(int h = hora; h < hora + duracion; h++)
+            {
+                if(a.getHorario().consultarDisponibilidad(dia, h))
+                {
+                    System.out.println(HorarioAula.DIAS[dia] + " " + h + ":00 -> LIBRE");
+                }else
+                {
+                    System.out.println(HorarioAula.DIAS[dia] + " " + h + ":00 -> OCUPADO");
+                }
+            }
+        }
+        try
+        {
+            System.out.println(gestorHorarios.reservar(aula, dia, hora, duracion, codigo));
+        }catch(HorarioConflictivoException ex)
+        {
+            System.out.println("Error: HorarioConflictivoException - " + ex.getMessage());
+        }
+    }
+    //liberar un horario
+    private static void liberarHorario()
+    {
+        String aula = pedirAula();
+        int dia = pedirDia();
+        int hora = lector.leerEntero("Hora de inicio (0-23): ", 0, 23);
+        int duracion = lector.leerEntero("Duracion en horas: ", 1, 24 - hora);
+        System.out.println(gestorHorarios.liberar(aula, dia, hora, duracion));
+    }
+    //consultar si una hora esta libre
+    private static void consultarDisponibilidad()
+    {
+        String aula = pedirAula();
+        int dia = pedirDia();
+        int hora = lector.leerEntero("Hora (0-23): ", 0, 23);
+        Aula a = gestorHorarios.buscarAula(aula);
+        if(a == null)
+        {
+            System.out.println("No existe el aula " + aula + ".");
+            return;
+        }
+        if(a.getHorario().consultarDisponibilidad(dia, hora))
+        {
+            System.out.println(aula + " " + HorarioAula.DIAS[dia] + " " + hora + ":00 -> LIBRE");
+        }else
+        {
+            System.out.println(aula + " " + HorarioAula.DIAS[dia] + " " + hora + ":00 -> OCUPADO por " + a.getHorario().getMateria(dia, hora));
         }
     }
 }
