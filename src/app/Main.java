@@ -1,5 +1,6 @@
 package app;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Queue;
 
 import estructuras.HorarioAula;
@@ -7,6 +8,7 @@ import excepciones.ColaDeEsperaVaciaException;
 import excepciones.CupoLlenoException;
 import excepciones.EstudianteNoEncontradoException;
 import excepciones.HorarioConflictivoException;
+import excepciones.PilaDeshacerVaciaException;
 import excepciones.PreRequisitoNoAprobadoException;
 import modelo.Aula;
 import modelo.Edificio;
@@ -21,8 +23,14 @@ import modelo.Profesor;
 import servicio.GestorEstudiantes;
 import servicio.GestorHorarios;
 import servicio.GestorMaterias;
+import servicio.GestorOperaciones;
 import servicio.GestorReportes;
 import servicio.GestorRutas;
+import servicio.OpCambiarHorario;
+import servicio.OpCancelar;
+import servicio.OpEliminarEstudiante;
+import servicio.OpInscribir;
+import servicio.OpRegistrarNota;
 import util.LectorConsola;
 import util.Validador;
 /**
@@ -39,6 +47,7 @@ public class Main
     static GestorHorarios gestorHorarios = new GestorHorarios(gestorMaterias);
     static GestorRutas gestorRutas = new GestorRutas();
     static GestorReportes gestorReportes = new GestorReportes(gestorEstudiantes, gestorMaterias);
+    static GestorOperaciones gestorOperaciones = new GestorOperaciones();
     public static void main(String[] args)
     {
         int opcion;
@@ -112,7 +121,11 @@ public class Main
                     break;
                 //deshacer y rehacer
                 case 19:
+                    deshacer();
+                    break;
                 case 20:
+                    rehacer();
+                    break;
                 //procesamiento por lotes
                 case 21:
                     System.out.println("Opcion en construccion.");
@@ -223,6 +236,9 @@ public class Main
         try
         {
             Estudiante e = gestorEstudiantes.eliminar(id);
+            //tambien lo saco de las materias y colas donde estaba
+            LinkedList<String> materias = gestorMaterias.retirarEstudiante(id);
+            gestorOperaciones.registrar(new OpEliminarEstudiante(gestorEstudiantes, gestorMaterias, e, materias));
             System.out.println("Estudiante eliminado exitosamente");
         }catch(EstudianteNoEncontradoException ex){
             System.out.println("Error: EstudianteNoEncontradoException - " + ex.getMessage());
@@ -302,7 +318,12 @@ public class Main
         String codigo = lector.leerTexto("Codigo de la materia: ").toUpperCase();
         try
         {
-            System.out.println(gestorMaterias.inscribir(id, codigo));
+            String resultado = gestorMaterias.inscribir(id, codigo);
+            System.out.println(resultado);
+            if(resultado.startsWith("Inscrito"))
+            {
+                gestorOperaciones.registrar(new OpInscribir(gestorMaterias, id, codigo));
+            }
         }catch(EstudianteNoEncontradoException ex)
         {
             System.out.println("Error: EstudianteNoEncontradoException - " + ex.getMessage());
@@ -321,7 +342,12 @@ public class Main
         String codigo = lector.leerTexto("Codigo de la materia: ").toUpperCase();
         try
         {
-            System.out.println(gestorMaterias.cancelar(id, codigo));
+            String resultado = gestorMaterias.cancelar(id, codigo);
+            System.out.println(resultado);
+            if(resultado.startsWith("Inscripcion cancelada"))
+            {
+                gestorOperaciones.registrar(new OpCancelar(gestorMaterias, id, codigo));
+            }
         }catch(EstudianteNoEncontradoException ex)
         {
             System.out.println("Error: EstudianteNoEncontradoException - " + ex.getMessage());
@@ -398,7 +424,12 @@ public class Main
         }
         try
         {
-            System.out.println(gestorHorarios.reservar(aula, dia, hora, duracion, codigo));
+            String resultado = gestorHorarios.reservar(aula, dia, hora, duracion, codigo);
+            System.out.println(resultado);
+            if(resultado.startsWith("Reserva exitosa"))
+            {
+                gestorOperaciones.registrar(new OpCambiarHorario(gestorHorarios, aula, dia, hora, duracion, codigo));
+            }
         }catch(HorarioConflictivoException ex)
         {
             System.out.println("Error: HorarioConflictivoException - " + ex.getMessage());
@@ -473,7 +504,16 @@ public class Main
         evaluaciones[2] = new ExamenFinal(lector.leerDecimal("Nota del examen final (50%): ", 0.0, 5.0));
         try
         {
-            System.out.println(gestorReportes.registrarNota(id, semestre, codigo, evaluaciones));
+            Estudiante e = gestorEstudiantes.buscar(id);
+            //guardo la nota que habia antes para poder deshacer
+            Double anterior = e.getNotas().getNota(semestre, codigo);
+            String resultado = gestorReportes.registrarNota(id, semestre, codigo, evaluaciones);
+            System.out.println(resultado);
+            if(resultado.startsWith("Nota registrada"))
+            {
+                Double nueva = e.getNotas().getNota(semestre, codigo);
+                gestorOperaciones.registrar(new OpRegistrarNota(e, semestre, codigo, anterior, nueva));
+            }
         }catch(EstudianteNoEncontradoException ex)
         {
             System.out.println("Error: EstudianteNoEncontradoException - " + ex.getMessage());
@@ -489,6 +529,34 @@ public class Main
         }catch(EstudianteNoEncontradoException ex)
         {
             System.out.println("Error: EstudianteNoEncontradoException - " + ex.getMessage());
+        }
+    }
+    //deshacer la ultima operacion
+    private static void deshacer()
+    {
+        try
+        {
+            System.out.println(gestorOperaciones.deshacer());
+        }catch(PilaDeshacerVaciaException ex)
+        {
+            System.out.println("Error: PilaDeshacerVaciaException - " + ex.getMessage());
+        }catch(Exception ex)
+        {
+            System.out.println("Error: " + ex.getClass().getSimpleName() + " - " + ex.getMessage());
+        }
+    }
+    //rehacer la ultima operacion que se deshizo
+    private static void rehacer()
+    {
+        try
+        {
+            System.out.println(gestorOperaciones.rehacer());
+        }catch(PilaDeshacerVaciaException ex)
+        {
+            System.out.println("Error: PilaDeshacerVaciaException - " + ex.getMessage());
+        }catch(Exception ex)
+        {
+            System.out.println("Error: " + ex.getClass().getSimpleName() + " - " + ex.getMessage());
         }
     }
     //moverse entre los reportes que ya se vieron

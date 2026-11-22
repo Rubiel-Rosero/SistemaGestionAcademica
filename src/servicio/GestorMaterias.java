@@ -1,5 +1,6 @@
 package servicio;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Queue;
 import excepciones.ColaDeEsperaVaciaException;
 import excepciones.CupoLlenoException;
@@ -92,7 +93,10 @@ public class GestorMaterias
         if(m.hayCupo())
         {
             m.inscribir(id);
-            e.agregarAlHistorial(codigo);
+            if(!e.getHistorialMaterias().contains(codigo))
+            {
+                e.agregarAlHistorial(codigo);
+            }
             return "Inscrito: " + e.getNombre() + " en " + m.getNombre() + ". Cupos disponibles: " + m.getCuposDisponibles();
         }
         //si no hay cupo va a la cola de espera
@@ -120,10 +124,32 @@ public class GestorMaterias
         {
             m.inscribir(siguiente);
             Estudiante nuevo = gestorEstudiantes.buscar(siguiente);
-            nuevo.agregarAlHistorial(codigo);
+            if(!nuevo.getHistorialMaterias().contains(codigo))
+            {
+                nuevo.agregarAlHistorial(codigo);
+            }
             mensaje += "\n" + nuevo.getNombre() + " salio de la cola de espera y quedo inscrito";
         }
         return mensaje;
+    }
+    //cuando se elimina un estudiante lo saco de todas las materias y colas
+    //devuelvo las materias donde estaba inscrito para poder deshacer
+    public LinkedList<String> retirarEstudiante(String id)
+    {
+        LinkedList<String> retiradas = new LinkedList<>();
+        for(Materia m : materias.values())
+        {
+            if(m.estaInscrito(id))
+            {
+                m.cancelar(id);
+                retiradas.addLast(m.getCodigo());
+            }
+            if(m.estaEnCola(id))
+            {
+                m.getColaEspera().remove(id);
+            }
+        }
+        return retiradas;
     }
     //ver la cola de espera de una materia
     public Queue<String> verColaEspera(String codigo) throws ColaDeEsperaVaciaException

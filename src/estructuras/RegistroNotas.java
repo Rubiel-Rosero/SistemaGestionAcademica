@@ -115,6 +115,30 @@ public class RegistroNotas
         }
         return reprobadas;
     }
+    //buscar la nota de una materia en un semestre, null si no esta
+    public Double getNota(int semestre, String codigo)
+    {
+        for(int j = 0; j < codigos[semestre - 1].length; j++)
+        {
+            if(codigos[semestre - 1][j] != null && codigos[semestre - 1][j].equals(codigo))
+            {
+                return notas[semestre - 1][j];
+            }
+        }
+        return null;
+    }
+    //quitar la nota de una materia (lo uso para deshacer)
+    public void eliminar(int semestre, String codigo)
+    {
+        for(int j = 0; j < codigos[semestre - 1].length; j++)
+        {
+            if(codigos[semestre - 1][j] != null && codigos[semestre - 1][j].equals(codigo))
+            {
+                codigos[semestre - 1][j] = null;
+                notas[semestre - 1][j] = null;
+            }
+        }
+    }
     //recorro la matriz desde el reporte
     public String getCodigo(int semestre, int j)
     {
