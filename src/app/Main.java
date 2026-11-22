@@ -10,6 +10,10 @@ import excepciones.HorarioConflictivoException;
 import excepciones.PreRequisitoNoAprobadoException;
 import modelo.Aula;
 import modelo.Edificio;
+import modelo.Evaluacion;
+import modelo.ExamenFinal;
+import modelo.Parcial;
+import modelo.Quiz;
 import modelo.Estudiante;
 import modelo.Facultad;
 import modelo.Materia;
@@ -17,6 +21,7 @@ import modelo.Profesor;
 import servicio.GestorEstudiantes;
 import servicio.GestorHorarios;
 import servicio.GestorMaterias;
+import servicio.GestorReportes;
 import servicio.GestorRutas;
 import util.LectorConsola;
 import util.Validador;
@@ -33,6 +38,7 @@ public class Main
     static GestorMaterias gestorMaterias = new GestorMaterias(gestorEstudiantes);
     static GestorHorarios gestorHorarios = new GestorHorarios(gestorMaterias);
     static GestorRutas gestorRutas = new GestorRutas();
+    static GestorReportes gestorReportes = new GestorReportes(gestorEstudiantes, gestorMaterias);
     public static void main(String[] args)
     {
         int opcion;
@@ -96,8 +102,14 @@ public class Main
                     break;
                 //reportes academicos
                 case 16:
+                    registrarNota();
+                    break;
                 case 17:
+                    verReporte();
+                    break;
                 case 18:
+                    navegarReportes();
+                    break;
                 //deshacer y rehacer
                 case 19:
                 case 20:
@@ -448,5 +460,52 @@ public class Main
         int origen = pedirEdificio("Edificio de origen: ");
         int destino = pedirEdificio("Edificio de destino: ");
         System.out.println(gestorRutas.calcularRuta(origen, destino));
+    }
+    //registrar las tres notas de una materia
+    private static void registrarNota()
+    {
+        String id = lector.leerTexto("Id del estudiante: ");
+        int semestre = lector.leerEntero("Semestre (1-10): ", 1, 10);
+        String codigo = lector.leerTexto("Codigo de la materia: ").toUpperCase();
+        Evaluacion[] evaluaciones = new Evaluacion[3];
+        evaluaciones[0] = new Quiz(lector.leerDecimal("Nota del quiz (20%): ", 0.0, 5.0));
+        evaluaciones[1] = new Parcial(lector.leerDecimal("Nota del parcial (30%): ", 0.0, 5.0));
+        evaluaciones[2] = new ExamenFinal(lector.leerDecimal("Nota del examen final (50%): ", 0.0, 5.0));
+        try
+        {
+            System.out.println(gestorReportes.registrarNota(id, semestre, codigo, evaluaciones));
+        }catch(EstudianteNoEncontradoException ex)
+        {
+            System.out.println("Error: EstudianteNoEncontradoException - " + ex.getMessage());
+        }
+    }
+    //ver el reporte academico de un estudiante
+    private static void verReporte()
+    {
+        String id = lector.leerTexto("Id del estudiante: ");
+        try
+        {
+            System.out.println(gestorReportes.generarReporte(id));
+        }catch(EstudianteNoEncontradoException ex)
+        {
+            System.out.println("Error: EstudianteNoEncontradoException - " + ex.getMessage());
+        }
+    }
+    //moverse entre los reportes que ya se vieron
+    private static void navegarReportes()
+    {
+        int opcion;
+        do
+        {
+            System.out.println("\n1. Atras  2. Adelante  3. Volver al menu");
+            opcion = lector.leerEntero("Seleccione: ", 1, 3);
+            if(opcion == 1)
+            {
+                System.out.println(gestorReportes.atras());
+            }else if(opcion == 2)
+            {
+                System.out.println(gestorReportes.adelante());
+            }
+        }while(opcion != 3);
     }
 }
