@@ -1,8 +1,6 @@
 package modelo;
-
 import java.util.LinkedList;
 import java.util.Queue;
-
 public class Materia
 {
     private String codigo;
@@ -118,5 +116,4 @@ public class Materia
     {
         return "Codigo: " + codigo + "\nNombre: " + nombre + "\nCreditos: " + creditos + "\nFacultad: " + facultad.getNombre() + "\nCupos: " + inscritos.size();
     }
-
 }

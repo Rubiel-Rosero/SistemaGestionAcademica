@@ -1,7 +1,5 @@
 package modelo;
-
 import estructuras.HorarioAula;
-
 /*
 los salones del campus con su capacidad y horario
 */

@@ -1,7 +1,5 @@
 package estructuras;
-
 import excepciones.HorarioConflictivoException;
-
 /*
 matriz de 7 dias por 24 horas que guarda si cada hora de un aula esta ocupada y que materia la tiene reservada
 */

@@ -1,7 +1,6 @@
 package servicio;
 import java.util.HashMap;
 import java.util.Queue;
-
 import excepciones.ColaDeEsperaVaciaException;
 import excepciones.CupoLlenoException;
 import excepciones.EstudianteNoEncontradoException;
@@ -9,7 +8,6 @@ import excepciones.PreRequisitoNoAprobadoException;
 import modelo.Estudiante;
 import modelo.Facultad;
 import modelo.Materia;
-
 public class GestorMaterias
 {
     private HashMap<String, Materia> materias;

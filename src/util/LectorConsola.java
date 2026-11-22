@@ -1,7 +1,5 @@
 package util;
-
 import java.util.Scanner;
-
 /**
 Clase de apoyo para leer datos del teclado sin que el programa se caiga.
 */

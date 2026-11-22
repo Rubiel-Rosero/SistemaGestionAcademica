@@ -39,8 +39,6 @@ public class Estudiante extends Persona
             return historialMaterias.getFirst();
         }
     }
-
-
     @Override
     public String mostrarInformacion()
     {

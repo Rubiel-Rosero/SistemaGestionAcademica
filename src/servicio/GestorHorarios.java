@@ -1,6 +1,5 @@
 package servicio;
 import java.util.TreeMap;
-
 import estructuras.HorarioAula;
 import excepciones.HorarioConflictivoException;
 import modelo.Aula;
@@ -57,5 +56,4 @@ public class GestorHorarios
         a.getHorario().liberar(dia, hora, duracion);
         return "Horario liberado: " + nombreAula + " " + HorarioAula.DIAS[dia] + " de " + hora + ":00 a " + (hora + duracion) + ":00";
     }
-
 }

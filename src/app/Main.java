@@ -9,6 +9,7 @@ import excepciones.EstudianteNoEncontradoException;
 import excepciones.HorarioConflictivoException;
 import excepciones.PreRequisitoNoAprobadoException;
 import modelo.Aula;
+import modelo.Edificio;
 import modelo.Estudiante;
 import modelo.Facultad;
 import modelo.Materia;
@@ -16,6 +17,7 @@ import modelo.Profesor;
 import servicio.GestorEstudiantes;
 import servicio.GestorHorarios;
 import servicio.GestorMaterias;
+import servicio.GestorRutas;
 import util.LectorConsola;
 import util.Validador;
 /**
@@ -30,6 +32,7 @@ public class Main
     static GestorEstudiantes gestorEstudiantes = new GestorEstudiantes();
     static GestorMaterias gestorMaterias = new GestorMaterias(gestorEstudiantes);
     static GestorHorarios gestorHorarios = new GestorHorarios(gestorMaterias);
+    static GestorRutas gestorRutas = new GestorRutas();
     public static void main(String[] args)
     {
         int opcion;
@@ -86,7 +89,11 @@ public class Main
                     break;
                 //rutas entre edificios
                 case 14:
+                    agregarConexion();
+                    break;
                 case 15:
+                    calcularRuta();
+                    break;
                 //reportes academicos
                 case 16:
                 case 17:
@@ -413,5 +420,33 @@ public class Main
         {
             System.out.println(aula + " " + HorarioAula.DIAS[dia] + " " + hora + ":00 -> OCUPADO por " + a.getHorario().getMateria(dia, hora));
         }
+    }
+    /*
+    Edificios
+    */
+    //mostrar los edificios y pedir uno
+    private static int pedirEdificio(String mensaje)
+    {
+        Edificio[] edificios = gestorRutas.getEdificios();
+        for(int i = 0; i < edificios.length; i++)
+        {
+            System.out.println(i + ". " + edificios[i].getNombre());
+        }
+        return lector.leerEntero(mensaje, 0, edificios.length - 1);
+    }
+    //conectar dos edificios
+    private static void agregarConexion()
+    {
+        int a = pedirEdificio("Edificio de origen: ");
+        int b = pedirEdificio("Edificio de destino: ");
+        int metros = lector.leerEntero("Distancia en metros (1-5000): ", 1, 5000);
+        System.out.println(gestorRutas.agregarConexion(a, b, metros));
+    }
+    //calcular la ruta mas corta
+    private static void calcularRuta()
+    {
+        int origen = pedirEdificio("Edificio de origen: ");
+        int destino = pedirEdificio("Edificio de destino: ");
+        System.out.println(gestorRutas.calcularRuta(origen, destino));
     }
 }
