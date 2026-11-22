@@ -5,6 +5,7 @@ import java.util.Queue;
 
 import estructuras.HorarioAula;
 import excepciones.ColaDeEsperaVaciaException;
+import excepciones.ArchivoInvalidoException;
 import excepciones.CupoLlenoException;
 import excepciones.EstudianteNoEncontradoException;
 import excepciones.HorarioConflictivoException;
@@ -31,14 +32,12 @@ import servicio.OpCancelar;
 import servicio.OpEliminarEstudiante;
 import servicio.OpInscribir;
 import servicio.OpRegistrarNota;
+import servicio.ProcesadorLotes;
 import util.LectorConsola;
 import util.Validador;
-/**
- * Clase principal del Sistema de Gestion Academica.
- * Muestra el menu con las 22 opciones y, segun lo que elija el usuario,
- * llama al metodo que se encarga de esa opcion.
- * Las opciones que dicen "en construccion" se van completando modulo por modulo.
- */
+/*
+clase principal: muestra el menu con las 22 opciones y llama al metodo de cada opcion
+*/
 public class Main
 {
     static LectorConsola lector = new LectorConsola();
@@ -48,6 +47,7 @@ public class Main
     static GestorRutas gestorRutas = new GestorRutas();
     static GestorReportes gestorReportes = new GestorReportes(gestorEstudiantes, gestorMaterias);
     static GestorOperaciones gestorOperaciones = new GestorOperaciones();
+    static ProcesadorLotes procesadorLotes = new ProcesadorLotes(gestorMaterias);
     public static void main(String[] args)
     {
         int opcion;
@@ -128,7 +128,7 @@ public class Main
                     break;
                 //procesamiento por lotes
                 case 21:
-                    System.out.println("Opcion en construccion.");
+                    procesarCSV();
                     break;
                 case 22:
                     System.out.println("Programa finalizado.");
@@ -557,6 +557,20 @@ public class Main
         }catch(Exception ex)
         {
             System.out.println("Error: " + ex.getClass().getSimpleName() + " - " + ex.getMessage());
+        }
+    }
+    //procesar un archivo CSV con solicitudes de inscripcion
+    private static void procesarCSV()
+    {
+        String ruta = lector.leerTexto("Ruta del archivo (ej: solicitudes.csv): ");
+        try
+        {
+            int cantidad = procesadorLotes.cargar(ruta);
+            System.out.println("Se cargaron " + cantidad + " solicitudes en la cola\n");
+            System.out.println(procesadorLotes.procesar());
+        }catch(ArchivoInvalidoException ex)
+        {
+            System.out.println("Error: ArchivoInvalidoException - " + ex.getMessage());
         }
     }
     //moverse entre los reportes que ya se vieron
