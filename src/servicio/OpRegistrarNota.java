@@ -1,8 +1,7 @@
 package servicio;
-
 import modelo.Estudiante;
 /*
-guarda una nota registrada, con la nota que habia antes, para poder deshacerla
+guardo una nota registrada, con la nota que habia antes, para poder deshacerla
 */
 public class OpRegistrarNota extends Operacion
 {

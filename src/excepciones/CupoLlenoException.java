@@ -1,6 +1,6 @@
 package excepciones;
 /*
-Excepcion personalizada que se lanza cuando la materia ya no tiene cupos disponibles.
+excepcion personalizada que se lanza cuando la materia ya no tiene cupos disponibles.
 */
 public class CupoLlenoException extends Exception
 {

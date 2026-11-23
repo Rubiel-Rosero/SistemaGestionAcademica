@@ -59,7 +59,9 @@ public class GestorReportes
     {
         Estudiante e = gestorEstudiantes.buscar(id);
         RegistroNotas notas = e.getNotas();
-        String reporte = "=== REPORTE DE " + e.getNombre() + " ===";
+        String reporte = "=== REPORTE ACADEMICO ===\nEstudiante: " + e.getNombre() + " (ID: " + e.getId() + ")";
+        int aprobadas = 0;
+        int reprobadas = 0;
         for(int s = 1; s <= 10; s++)
         {
             String lineas = "";
@@ -68,6 +70,13 @@ public class GestorReportes
                 if(notas.getCodigo(s, j) != null)
                 {
                     lineas = lineas + "\n  " + notas.getCodigo(s, j) + ": " + notas.getNota(s, j);
+                    if(notas.getNota(s, j) >= 3.0)
+                    {
+                        aprobadas++;
+                    }else
+                    {
+                        reprobadas++;
+                    }
                 }
             }
             //solo muestro los semestres que tienen materias
@@ -78,8 +87,9 @@ public class GestorReportes
             }
         }
         double acumulado = Math.round(notas.promedioAcumulado() * 100) / 100.0;
-        reporte = reporte + "\nPromedio acumulado: " + acumulado;
-        reporte = reporte + "\nReprobadas: " + notas.materiasReprobadas();
+        reporte = reporte + "\n=== RESUMEN ===\nPromedio acumulado: " + acumulado;
+        reporte = reporte + "\nMaterias aprobadas: " + aprobadas + "\nMaterias reprobadas: " + reprobadas;
+        reporte = reporte + "\nCodigos reprobados: " + notas.materiasReprobadas();
         //el reporte que estaba se va a la pila de atras, maximo 10
         if(reporteActual != null)
         {

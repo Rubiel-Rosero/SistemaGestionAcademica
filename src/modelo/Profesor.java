@@ -1,4 +1,7 @@
 package modelo;
+/*
+profesor que hereda de Persona, cada materia tiene uno
+*/
 public class Profesor extends Persona
 {
     private String departamento;

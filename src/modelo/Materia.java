@@ -1,6 +1,9 @@
 package modelo;
 import java.util.LinkedList;
 import java.util.Queue;
+/*
+materia con sus cupos, la lista de prerrequisitos, los inscritos y la cola de espera
+*/
 public class Materia
 {
     private String codigo;
@@ -11,7 +14,7 @@ public class Materia
     private Profesor profesor;
     private LinkedList<String> prerrequisitos;
     private LinkedList<String> inscritos;
-    private Queue<String> colaEspera;
+    private LinkedList<String> colaEspera;
     public Materia(String codigo, String nombre, int cuposMaximos, int creditos, Facultad facultad, Profesor profesor)
     {
         this.codigo = codigo;
@@ -68,6 +71,11 @@ public class Materia
     public String desencolar()
     {
         return colaEspera.poll();
+    }
+    //devolver a alguien al primer puesto de la cola (se usa al deshacer)
+    public void devolverAlFrenteDeCola(String id)
+    {
+        colaEspera.addFirst(id);
     }
     //saber que cupos quedan
     public int getCuposDisponibles()

@@ -1,5 +1,5 @@
 package modelo;
-/* 
+/*
 edificio del campus
 */
 public class Edificio

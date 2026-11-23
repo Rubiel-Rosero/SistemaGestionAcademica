@@ -5,7 +5,7 @@ matriz de 7 dias por 24 horas que guarda si cada hora de un aula esta ocupada y 
 */
 public class HorarioAula
 {
-    public static final String[] DIAS = {"Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes" , "Sabado"};
+    public static String[] DIAS = {"Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes" , "Sabado"};
     private boolean[][] ocupado;
     private String[][] materiaAsignada;
     public HorarioAula()

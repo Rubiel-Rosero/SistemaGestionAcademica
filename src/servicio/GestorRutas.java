@@ -2,12 +2,9 @@ package servicio;
 /*
 manejo de los edificios del campus y el calculo de las rutas
 */
-
 import java.util.LinkedList;
-
 import estructuras.GrafoCampus;
 import modelo.Edificio;
-
 public class GestorRutas
 {
     private GrafoCampus grafo;

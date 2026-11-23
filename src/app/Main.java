@@ -2,7 +2,6 @@ package app;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
-
 import estructuras.HorarioAula;
 import excepciones.ColaDeEsperaVaciaException;
 import excepciones.ArchivoInvalidoException;
@@ -51,6 +50,7 @@ public class Main
     public static void main(String[] args)
     {
         int opcion;
+        precargarDatos();
         //menu principal
         do
         {
@@ -143,6 +143,56 @@ public class Main
         }while(opcion != 22);
         lector.cerrar();
     }
+    //datos de ejemplo para no empezar vacio
+    private static void precargarDatos()
+    {
+        Facultad[] f = gestorMaterias.getFacultades();
+        //estudiantes
+        Estudiante ana = new Estudiante("2024001", "Ana Maria Gomez", "ana.gomez@universidad.edu", 3);
+        gestorEstudiantes.registrar(ana);
+        gestorEstudiantes.registrar(new Estudiante("2024002", "Juan Perez", "juan.perez@universidad.edu", 2));
+        gestorEstudiantes.registrar(new Estudiante("2024003", "Maria Lopez", "maria.lopez@universidad.edu", 2));
+        gestorEstudiantes.registrar(new Estudiante("2024004", "Carlos Ruiz", "carlos.ruiz@universidad.edu", 1));
+        gestorEstudiantes.registrar(new Estudiante("2024005", "Laura Diaz", "laura.diaz@universidad.edu", 1));
+        gestorEstudiantes.registrar(new Estudiante("2024006", "Pablo Ortiz", "pablo.ortiz@universidad.edu", 1));
+        //profesores
+        Profesor p1 = new Profesor("P01", "Jorge Rios", "jorge.rios@universidad.edu", "Matematicas", 4500000);
+        Profesor p2 = new Profesor("P02", "Diana Mora", "diana.mora@universidad.edu", "Fisica", 4200000);
+        Profesor p3 = new Profesor("P03", "Andres Cano", "andres.cano@universidad.edu", "Sistemas", 4800000);
+        //materias
+        gestorMaterias.crearMateria(new Materia("CALC101", "Calculo I", 3, 4, f[0], p1));
+        gestorMaterias.crearMateria(new Materia("CALC102", "Calculo II", 3, 4, f[0], p1));
+        gestorMaterias.crearMateria(new Materia("FIS101", "Fisica I", 30, 3, f[4], p2));
+        gestorMaterias.crearMateria(new Materia("FIS102", "Fisica II", 30, 3, f[4], p2));
+        gestorMaterias.crearMateria(new Materia("PROG101", "Programacion I", 30, 3, f[0], p3));
+        gestorMaterias.crearMateria(new Materia("MATDIS", "Matematicas Discretas", 30, 3, f[0], p1));
+        gestorMaterias.agregarPrerrequisito("CALC102", "CALC101");
+        gestorMaterias.agregarPrerrequisito("FIS102", "FIS101");
+        //notas de Ana (igual al ejemplo del enunciado)
+        ana.getNotas().registrar(1, "CALC101", 4.5);
+        ana.getNotas().registrar(1, "FIS101", 2.8);
+        ana.getNotas().registrar(1, "PROG101", 5.0);
+        ana.getNotas().registrar(2, "CALC102", 3.5);
+        ana.getNotas().registrar(2, "FIS102", 3.0);
+        ana.getNotas().registrar(2, "MATDIS", 2.5);
+        ana.agregarAlHistorial("CALC101");
+        ana.agregarAlHistorial("FIS101");
+        ana.agregarAlHistorial("PROG101");
+        ana.agregarAlHistorial("CALC102");
+        ana.agregarAlHistorial("FIS102");
+        ana.agregarAlHistorial("MATDIS");
+        try
+        {
+            //Juan y Maria ya estan en Calculo I, queda 1 cupo
+            gestorMaterias.inscribir("2024002", "CALC101");
+            gestorMaterias.inscribir("2024003", "CALC101");
+            //una reserva para probar el conflicto de horario
+            gestorHorarios.reservar("A101", 1, 8, 2, "CALC101");
+        }catch(Exception ex)
+        {
+            System.out.println("Error en la precarga: " + ex.getMessage());
+        }
+    }
     //mostrar todas las opciones del menu
     private static void mostrarMenu()
     {
@@ -183,7 +233,6 @@ public class Main
     //metodo para registrar el estudiante
     private static void registrarEstudiante()
     {
-        System.out.println("Ingrese el id");
         String id = lector.leerTexto("Id: ");
         String nombre = lector.leerTexto("Nombre: ");
         String email = lector.leerTexto("Email: ");
@@ -369,12 +418,17 @@ public class Main
             int posicion = 1;
             for(String id : cola)
             {
-                System.out.println(posicion + ". " + id);
+                Estudiante e = gestorEstudiantes.buscar(id);
+                System.out.println("Posicion " + posicion + ": " + e.getNombre() + " (" + id + ")");
                 posicion++;
             }
+            System.out.println("Total en espera: " + cola.size());
         }catch(ColaDeEsperaVaciaException ex)
         {
             System.out.println("Error: ColaDeEsperaVaciaException - " + ex.getMessage());
+        }catch(EstudianteNoEncontradoException ex)
+        {
+            System.out.println("Error: EstudianteNoEncontradoException - " + ex.getMessage());
         }
     }
     /*
@@ -566,7 +620,7 @@ public class Main
         try
         {
             int cantidad = procesadorLotes.cargar(ruta);
-            System.out.println("Se cargaron " + cantidad + " solicitudes en la cola\n");
+            System.out.println("Se encolaron " + cantidad + " solicitudes.\n");
             System.out.println(procesadorLotes.procesar());
         }catch(ArchivoInvalidoException ex)
         {

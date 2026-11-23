@@ -1,8 +1,6 @@
 package servicio;
-
 import java.util.LinkedList;
 import java.util.Queue;
-
 import excepciones.ArchivoInvalidoException;
 import excepciones.CupoLlenoException;
 import excepciones.EstudianteNoEncontradoException;
@@ -34,39 +32,43 @@ public class ProcesadorLotes
     //saco las solicitudes una por una y las inscribo
     public String procesar()
     {
-        String resultado = "";
+        String resultado = "Procesando cola...\n";
+        int total = cola.size();
+        int numero = 0;
         int exitosas = 0;
         int fallidas = 0;
         while(!cola.isEmpty())
         {
             SolicitudInscripcion s = cola.poll();
-            String linea = s.getIdEstudiante() + " -> " + s.getCodigoMateria() + ": ";
+            numero++;
+            String linea = "[" + numero + "/" + total + "] " + s.getIdEstudiante() + " -> " + s.getCodigoMateria() + " -> ";
             try
             {
                 String mensaje = gestorMaterias.inscribir(s.getIdEstudiante(), s.getCodigoMateria());
                 if(mensaje.startsWith("Inscrito"))
                 {
                     exitosas++;
+                    resultado = resultado + linea + "Exitosa\n";
                 }else
                 {
                     fallidas++;
+                    resultado = resultado + linea + "Fallida (" + mensaje + ")\n";
                 }
-                resultado = resultado + linea + mensaje + "\n";
             }catch(EstudianteNoEncontradoException ex)
             {
                 fallidas++;
-                resultado = resultado + linea + "Error: EstudianteNoEncontradoException - " + ex.getMessage() + "\n";
+                resultado = resultado + linea + "Fallida (EstudianteNoEncontradoException - " + ex.getMessage() + ")\n";
             }catch(PreRequisitoNoAprobadoException ex)
             {
                 fallidas++;
-                resultado = resultado + linea + "Error: PreRequisitoNoAprobadoException - " + ex.getMessage() + "\n";
+                resultado = resultado + linea + "Fallida (PreRequisitoNoAprobadoException - " + ex.getMessage() + ")\n";
             }catch(CupoLlenoException ex)
             {
                 fallidas++;
-                resultado = resultado + linea + "Error: CupoLlenoException - " + ex.getMessage() + "\n";
+                resultado = resultado + linea + "Fallida (CupoLlenoException - " + ex.getMessage() + ")\n";
             }
         }
-        resultado = resultado + "Exitosas: " + exitosas + "  Fallidas: " + fallidas;
+        resultado = resultado + "\n=== RESUMEN ===\nExitosas: " + exitosas + "\nFallidas: " + fallidas;
         return resultado;
     }
 }

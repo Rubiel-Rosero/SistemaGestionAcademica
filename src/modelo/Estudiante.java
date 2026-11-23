@@ -1,6 +1,9 @@
 package modelo;
 import java.util.LinkedList;
 import estructuras.RegistroNotas;
+/*
+estudiante que hereda de Persona, tiene su semestre, sus notas y su historial de materias
+*/
 public class Estudiante extends Persona
 {
     private int semestre;
@@ -42,6 +45,12 @@ public class Estudiante extends Persona
     @Override
     public String mostrarInformacion()
     {
-        return "\nId: " + getId() + " \nEstudiante: " + getNombre() + "\nSemestre: " + getSemestre() + "\nEmail: " + getEmail() + "\nHistorial de Materias: " + historialMaterias;
+        double promedio = Math.round(notas.promedioAcumulado() * 100) / 100.0;
+        String textoPromedio = "" + promedio;
+        if(promedio == 0)
+        {
+            textoPromedio = "0.0 (sin notas aun)";
+        }
+        return "\nId: " + getId() + " \nEstudiante: " + getNombre() + "\nSemestre: " + getSemestre() + "\nEmail: " + getEmail() + "\nPromedio acumulado: " + textoPromedio + "\nHistorial de Materias: " + historialMaterias;
     }
 }

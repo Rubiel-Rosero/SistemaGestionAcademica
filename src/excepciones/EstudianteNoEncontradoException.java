@@ -1,6 +1,6 @@
 package excepciones;
 /*
-Excepcion personalizada que se lanza cuando no existe un estudiante con el ID buscado.
+3excepcion personalizada que se lanza cuando no existe un estudiante con el ID buscado.
 */
 public class EstudianteNoEncontradoException extends Exception
 {

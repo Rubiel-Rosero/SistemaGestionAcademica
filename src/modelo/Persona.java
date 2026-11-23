@@ -1,4 +1,7 @@
 package modelo;
+/*
+clase abstracta con los datos que comparten estudiantes y profesores
+*/
 public abstract class Persona
 {
     private String id;

@@ -1,4 +1,7 @@
 package modelo;
+/*
+una facultad de la universidad, hay 5 fijas en un arreglo
+*/
 public class Facultad
 {
     private int id;

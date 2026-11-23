@@ -1,7 +1,8 @@
 package util;
+import java.util.Locale;
 import java.util.Scanner;
-/**
-Clase de apoyo para leer datos del teclado sin que el programa se caiga.
+/*
+clase de apoyo para leer datos del teclado
 */
 public class LectorConsola
 {
@@ -9,6 +10,8 @@ public class LectorConsola
     public LectorConsola()
     {
         sc = new Scanner(System.in);
+        //para que los decimales se escriban con punto, ejemplo 4.5
+        sc.useLocale(Locale.US);
     }
     //leer un texto que no puede quedar vacio
     public String leerTexto(String mensaje)
@@ -17,7 +20,7 @@ public class LectorConsola
         while(texto.isEmpty())
         {
             System.out.print(mensaje);
-            texto = sc.nextLine().trim();
+            texto = sc.nextLine();
             if(texto.isEmpty())
             {
                 System.out.println("El valor no puede estar vacio.");
@@ -33,44 +36,41 @@ public class LectorConsola
     //leer un numero entero entre min y max
     public int leerEntero(String mensaje, int min, int max)
     {
-        while(true)
+        int numero = min - 1;
+        do
         {
-            String texto = leerTexto(mensaje);
-            try
+            System.out.print(mensaje);
+            //si escribe letras no las tomo
+            if(sc.hasNextInt())
             {
-                int numero = Integer.parseInt(texto);
-                if(numero >= min && numero <= max)
-                {
-                    return numero;
-                }
+                numero = sc.nextInt();
+            }
+            sc.nextLine();
+            if(numero < min || numero > max)
+            {
                 System.out.println("Debe ser un numero entre " + min + " y " + max + ".");
             }
-            catch(NumberFormatException e)
-            {
-                System.out.println("Escriba un numero entero.");
-            }
-        }
+        }while(numero < min || numero > max);
+        return numero;
     }
-    //leer un numero decimal entre min y max (acepta punto o coma)
+    //leer un numero decimal entre min y max
     public double leerDecimal(String mensaje, double min, double max)
     {
-        while(true)
+        double numero = min - 1;
+        do
         {
-            String texto = leerTexto(mensaje).replace(',', '.');
-            try
+            System.out.print(mensaje);
+            if(sc.hasNextDouble())
             {
-                double numero = Double.parseDouble(texto);
-                if(numero >= min && numero <= max)
-                {
-                    return numero;
-                }
-                System.out.println("Debe ser un numero entre " + min + " y " + max + ".");
+                numero = sc.nextDouble();
             }
-            catch(NumberFormatException e)
+            sc.nextLine();
+            if(numero < min || numero > max)
             {
-                System.out.println("Escriba un numero, por ejemplo 4.5");
+                System.out.println("Debe ser un numero entre " + min + " y " + max + ", por ejemplo 4.5");
             }
-        }
+        }while(numero < min || numero > max);
+        return numero;
     }
     //cerrar el scanner al salir del programa
     public void cerrar()

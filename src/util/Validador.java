@@ -1,4 +1,7 @@
 package util;
+/*
+metodos para revisar los datos que escribe el usuario
+*/
 public class Validador
 {
     //revisar que el email este en el formato

@@ -2,11 +2,13 @@ package servicio;
 import java.util.HashMap;
 import excepciones.EstudianteNoEncontradoException;
 import modelo.Estudiante;
-//HashMap para lo estudiantes
+/*
+guarda los estudiantes en un arreglo de 500 y un HashMap para buscarlos rapido por id
+*/
 public class GestorEstudiantes
 {
     private Estudiante [] estudiantes;
-    private int cantidad  = 0;
+    private int cantidad;
     private HashMap<String, Estudiante> indice;
     public GestorEstudiantes()
     {

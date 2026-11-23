@@ -1,7 +1,5 @@
 package servicio;
-
 import java.util.Stack;
-
 import excepciones.PilaDeshacerVaciaException;
 /*
 guarda las operaciones en dos pilas para deshacer y rehacer
@@ -29,8 +27,10 @@ public class GestorOperaciones
         {
             throw new PilaDeshacerVaciaException("No hay operaciones para deshacer");
         }
-        Operacion op = pilaDeshacer.pop();
+        //la saco de la pila solo si se pudo deshacer, asi no se pierde si hay error
+        Operacion op = pilaDeshacer.peek();
         String resultado = op.deshacer();
+        pilaDeshacer.pop();
         pilaRehacer.push(op);
         return "Deshecho: " + op.getDescripcion() + "\n" + resultado;
     }
@@ -41,8 +41,9 @@ public class GestorOperaciones
         {
             throw new PilaDeshacerVaciaException("No hay operaciones para rehacer");
         }
-        Operacion op = pilaRehacer.pop();
+        Operacion op = pilaRehacer.peek();
         String resultado = op.rehacer();
+        pilaRehacer.pop();
         pilaDeshacer.push(op);
         return "Rehecho: " + op.getDescripcion() + "\n" + resultado;
     }
