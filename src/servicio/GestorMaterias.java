@@ -20,12 +20,13 @@ public class GestorMaterias
     //el ultimo estudiante que salio de la cola al cancelar, sirve para deshacer
     private String ultimoPromovido;
     //quien subio de la cola en cada materia al eliminar un estudiante, sirve para deshacer
-    private HashMap<String, String> promovidosAlRetirar = new HashMap<>();
+    private HashMap<String, String> promovidosAlRetirar;
 
     public GestorMaterias(GestorEstudiantes gestorEstudiantes)
     {
         this.gestorEstudiantes  = gestorEstudiantes;
         materias = new HashMap<>();
+        promovidosAlRetirar = new HashMap<>();
         facultades = new Facultad[5];
         facultades[0] = new Facultad(1, "Ingenieria");
         facultades[1] = new Facultad(2, "Ciencias Economicas");
@@ -153,7 +154,7 @@ public class GestorMaterias
             {
                 nuevo.agregarAlHistorial(codigo);
             }
-            mensaje += "\n" + nuevo.getNombre() + " salio de la cola de espera y quedo inscrito";
+            mensaje = mensaje + "\n" + nuevo.getNombre() + " salio de la cola de espera y quedo inscrito";
         }
         return mensaje;
     }
@@ -175,7 +176,7 @@ public class GestorMaterias
         {
             m.cancelar(promovido);
             m.devolverAlFrenteDeCola(promovido);
-            mensaje += "\n" + gestorEstudiantes.buscar(promovido).getNombre() + " volvio a la cola de espera, posicion 1";
+            mensaje = mensaje + "\n" + gestorEstudiantes.buscar(promovido).getNombre() + " volvio a la cola de espera, posicion 1";
         }
         if(!m.hayCupo())
         {

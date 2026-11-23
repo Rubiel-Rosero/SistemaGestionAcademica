@@ -43,7 +43,7 @@ public class GestorHorarios
             return "No existe una materia con el codigo " + codigo;
         }
         a.getHorario().reservar(dia, hora, duracion, codigo);
-        return "Reserva exitosa: " + codigo + " en " + nombreAula + ", " + HorarioAula.DIAS[dia] + " de " + hora + ":00 a " + (hora + duracion) + ":00";
+        return "Reserva exitosa: " + codigo + " en " + nombreAula + ", " + HorarioAula.dias[dia] + " de " + hora + ":00 a " + (hora + duracion) + ":00";
     }
     //liberar horas
     public String liberar(String nombreAula, int dia, int hora, int duracion)
@@ -54,6 +54,6 @@ public class GestorHorarios
             return "No existe el aula " + nombreAula;
         }
         a.getHorario().liberar(dia, hora, duracion);
-        return "Horario liberado: " + nombreAula + " " + HorarioAula.DIAS[dia] + " de " + hora + ":00 a " + (hora + duracion) + ":00";
+        return "Horario liberado: " + nombreAula + " " + HorarioAula.dias[dia] + " de " + hora + ":00 a " + (hora + duracion) + ":00";
     }
 }

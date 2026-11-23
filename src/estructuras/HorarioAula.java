@@ -5,7 +5,7 @@ matriz de 7 dias por 24 horas que guarda si cada hora de un aula esta ocupada y 
 */
 public class HorarioAula
 {
-    public static String[] DIAS = {"Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes" , "Sabado"};
+    public static String[] dias = {"Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes" , "Sabado"};
     private boolean[][] ocupado;
     private String[][] materiaAsignada;
     public HorarioAula()
@@ -21,7 +21,7 @@ public class HorarioAula
         {
             if(ocupado[dia][h])
             {
-                throw new HorarioConflictivoException(DIAS[dia] + " " + h + ":00 ya esta reservada por " + materiaAsignada[dia][h]);
+                throw new HorarioConflictivoException(dias[dia] + " " + h + ":00 ya esta reservada por " + materiaAsignada[dia][h]);
             }
         }
         //si todas estan libres, se reserva

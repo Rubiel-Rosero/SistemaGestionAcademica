@@ -449,7 +449,7 @@ public class Main
     {
         for(int i = 0; i < 7; i++)
         {
-            System.out.println(i + ". " + HorarioAula.DIAS[i]);
+            System.out.println(i + ". " + HorarioAula.dias[i]);
         }
         return lector.leerEntero("Dia (0-6): ", 0, 6);
     }
@@ -469,10 +469,10 @@ public class Main
             {
                 if(a.getHorario().consultarDisponibilidad(dia, h))
                 {
-                    System.out.println(HorarioAula.DIAS[dia] + " " + h + ":00 -> LIBRE");
+                    System.out.println(HorarioAula.dias[dia] + " " + h + ":00 -> LIBRE");
                 }else
                 {
-                    System.out.println(HorarioAula.DIAS[dia] + " " + h + ":00 -> OCUPADO");
+                    System.out.println(HorarioAula.dias[dia] + " " + h + ":00 -> OCUPADO");
                 }
             }
         }
@@ -512,10 +512,10 @@ public class Main
         }
         if(a.getHorario().consultarDisponibilidad(dia, hora))
         {
-            System.out.println(aula + " " + HorarioAula.DIAS[dia] + " " + hora + ":00 -> LIBRE");
+            System.out.println(aula + " " + HorarioAula.dias[dia] + " " + hora + ":00 -> LIBRE");
         }else
         {
-            System.out.println(aula + " " + HorarioAula.DIAS[dia] + " " + hora + ":00 -> OCUPADO por " + a.getHorario().getMateria(dia, hora));
+            System.out.println(aula + " " + HorarioAula.dias[dia] + " " + hora + ":00 -> OCUPADO por " + a.getHorario().getMateria(dia, hora));
         }
     }
     /*
@@ -596,7 +596,7 @@ public class Main
             System.out.println("Error: PilaDeshacerVaciaException - " + ex.getMessage());
         }catch(Exception ex)
         {
-            System.out.println("Error: " + ex.getClass().getSimpleName() + " - " + ex.getMessage());
+            System.out.println("Error: " + ex.getMessage());
         }
     }
     //rehacer la ultima operacion que se deshizo
@@ -610,7 +610,7 @@ public class Main
             System.out.println("Error: PilaDeshacerVaciaException - " + ex.getMessage());
         }catch(Exception ex)
         {
-            System.out.println("Error: " + ex.getClass().getSimpleName() + " - " + ex.getMessage());
+            System.out.println("Error: " + ex.getMessage());
         }
     }
     //procesar un archivo CSV con solicitudes de inscripcion
