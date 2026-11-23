@@ -11,7 +11,7 @@ public class LectorConsola
     {
         sc = new Scanner(System.in);
         //para que los decimales se escriban con punto, ejemplo 4.5
-        sc.useLocale(Locale.US);
+        sc.useLocale(Locale.US);//c
     }
     //leer un texto que no puede quedar vacio
     public String leerTexto(String mensaje)

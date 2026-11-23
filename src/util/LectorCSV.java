@@ -3,7 +3,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.LinkedList;
 import java.util.Scanner;
-
 import excepciones.ArchivoInvalidoException;
 /*
 lee un archivo CSV y devuelve cada linea separada por comas
